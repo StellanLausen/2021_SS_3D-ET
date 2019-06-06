@@ -370,6 +370,9 @@ MigrationBackup/
 # Never ignore Asset files
 ![Aa]ssets/**/*
 
+# Never ignore manifest file
+![Pp]ackages/manifest.json
+
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # [Aa]ssets/AssetStoreTools*
 
