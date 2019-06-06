@@ -367,8 +367,8 @@ MigrationBackup/
 [Bb]uilds/
 [Ll]ogs/
 
-# Never ignore Asset meta data
-![Aa]ssets/**/*.meta
+# Never ignore Asset files
+![Aa]ssets/**/*
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # [Aa]ssets/AssetStoreTools*
