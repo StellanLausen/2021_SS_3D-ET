@@ -8,6 +8,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    //fusch
+    public GameObject mainCamera;
+    public GameObject resetCam; 
+    
     public float speed = 100;
     public float jump = 300;
     public float GameOverHeight = 0f;
@@ -35,6 +39,12 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         GameOver();
+        //jump
+        Vector3 RayCastDirectrion = new Vector3(0,-1,0);
+        if (Physics.Raycast(transform.position, RayCastDirectrion, 1f, LayerMask.GetMask("Ground")))
+        {
+            Jump();
+        }
     }
 
     private void FixedUpdate()
@@ -42,13 +52,6 @@ public class PlayerController : MonoBehaviour
         //control
         Vector2 movement = move.ReadValue<Vector2>();
         rb.AddForce(speed * Time.deltaTime * movement.x, 0, speed * Time.deltaTime * movement.y);
-        
-        //jump
-        Vector3 RayCastDirectrion = new Vector3(0,-1,0);
-        if (Physics.Raycast(transform.position, RayCastDirectrion, 1f, LayerMask.GetMask("Ground")))
-        {
-            Jump();
-        }
     }
 
     private void OnCollisionStay(Collision collision)
@@ -58,6 +61,7 @@ public class PlayerController : MonoBehaviour
             Finished();
         }
     }
+
     private void Jump()
     {
         if (Keyboard.current.spaceKey.isPressed)
@@ -75,6 +79,7 @@ public class PlayerController : MonoBehaviour
             {
                 jumpPressTime = 50;
             }
+            //AddForce Physics should be in/called via fixedUpdate but the jump would`nt be working smooth
             rb.AddForce(0, jump + jumpPressTime, 0);
             jumpPressTime = 0;
         }
@@ -87,6 +92,9 @@ public class PlayerController : MonoBehaviour
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             Debug.Log("Leider verloren");
+            
+            //fusch
+            StartCoroutine(PlayCutScene());
         }
     }
     private void Finished()
@@ -95,5 +103,16 @@ public class PlayerController : MonoBehaviour
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         Debug.Log("Ziel erreicht");
+        
+        //fusch
+        StartCoroutine(PlayCutScene());
+    }
+    IEnumerator PlayCutScene()
+    {
+        resetCam.SetActive(true);
+        mainCamera.SetActive(false);
+        yield return new WaitForSeconds(2);
+        resetCam.SetActive(false);
+        mainCamera.SetActive(true);
     }
 }
