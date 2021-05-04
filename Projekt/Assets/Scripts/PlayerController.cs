@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour
 {
     //fusch
     public GameObject mainCamera;
-    public GameObject resetCam; 
-    
+    public GameObject resetCam;
+
     public float speed = 150;
     public float jump = 300;
     public float gameOverHeight = 0f;
@@ -37,7 +37,6 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         startPosVec = new Vector3(0,0.5f,0);
     }
-
     void Update()
     {
         GameOver();
@@ -101,7 +100,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Leider verloren");
             
             //Pfusch
-            StartCoroutine(PlayResetCam());
+            StartCoroutine(resetCam.GetComponent<ResetCameraController>().PlayResetCam());
         }
     }
     private void Finished()
@@ -112,7 +111,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Ziel erreicht");
         
         //Pfusch
-        StartCoroutine(PlayResetCam());
+        //StartCoroutine(PlayResetCam());
     }
     IEnumerator PlayResetCam()
     {
