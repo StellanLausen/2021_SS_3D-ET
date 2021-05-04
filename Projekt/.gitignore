@@ -2,6 +2,10 @@
 # Created by https://www.gitignore.io/api/unity,monodevelop,visualstudio,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=unity,monodevelop,visualstudio,visualstudiocode
 
+
+# Jetbrains data
+.idea
+
 ### MonoDevelop ###
 #User Specific
 *.userprefs

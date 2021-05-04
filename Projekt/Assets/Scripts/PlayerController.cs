@@ -12,13 +12,15 @@ public class PlayerController : MonoBehaviour
     public GameObject mainCamera;
     public GameObject resetCam; 
     
-    public float speed = 100;
+    public float speed = 150;
     public float jump = 300;
-    public float GameOverHeight = 0f;
+    public float gameOverHeight = 0f;
 
+    private Boolean shouldJump;
+    private float collectedJumpTime;
     private Boolean isGrounded;
     private Vector3 startPosVec;
-    private float jumpPressTime;
+    private float jumpPressTime = 0;
     private Rigidbody rb;
 
     public InputAction move;
@@ -33,27 +35,33 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        startPosVec = transform.position;
+        startPosVec = new Vector3(0,0.5f,0);
     }
 
     void Update()
     {
         GameOver();
         //jump
-        Vector3 RayCastDirectrion = new Vector3(0,-1,0);
-        if (Physics.Raycast(transform.position, RayCastDirectrion, 1f, LayerMask.GetMask("Ground")))
+        Vector3 rayCastDirectrion = new Vector3(0,-1,0);
+        if (Physics.Raycast(transform.position, rayCastDirectrion, 1f, LayerMask.GetMask("Ground")))
         {
             Jump();
         }
     }
-
     private void FixedUpdate()
     {
         //control
         Vector2 movement = move.ReadValue<Vector2>();
         rb.AddForce(speed * Time.deltaTime * movement.x, 0, speed * Time.deltaTime * movement.y);
-    }
 
+        //jump
+        if (shouldJump)
+        {
+            rb.AddForce(0, jump + collectedJumpTime, 0);
+            collectedJumpTime = 0;
+            shouldJump = false;
+        }
+    }
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Finish"))
@@ -61,7 +69,6 @@ public class PlayerController : MonoBehaviour
             Finished();
         }
     }
-
     private void Jump()
     {
         if (Keyboard.current.spaceKey.isPressed)
@@ -71,6 +78,7 @@ public class PlayerController : MonoBehaviour
 
         if (Keyboard.current.spaceKey.wasReleasedThisFrame)
         {
+            shouldJump = true;
             if (jumpPressTime < 20)
             {
                 jumpPressTime = 0;
@@ -79,22 +87,21 @@ public class PlayerController : MonoBehaviour
             {
                 jumpPressTime = 50;
             }
-            //AddForce Physics should be in/called via fixedUpdate but the jump would`nt be working smooth
-            rb.AddForce(0, jump + jumpPressTime, 0);
+            collectedJumpTime = jumpPressTime;
             jumpPressTime = 0;
         }
     }
     private void GameOver()
     {
-        if (rb.transform.position.y <= GameOverHeight)
+        if (rb.transform.position.y <= gameOverHeight)
         {
-            rb.transform.position = startPosVec;
+            transform.position = startPosVec;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             Debug.Log("Leider verloren");
             
-            //fusch
-            StartCoroutine(PlayCutScene());
+            //Pfusch
+            StartCoroutine(PlayResetCam());
         }
     }
     private void Finished()
@@ -104,10 +111,10 @@ public class PlayerController : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
         Debug.Log("Ziel erreicht");
         
-        //fusch
-        StartCoroutine(PlayCutScene());
+        //Pfusch
+        StartCoroutine(PlayResetCam());
     }
-    IEnumerator PlayCutScene()
+    IEnumerator PlayResetCam()
     {
         resetCam.SetActive(true);
         mainCamera.SetActive(false);
