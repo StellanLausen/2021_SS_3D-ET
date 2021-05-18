@@ -1,15 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    //fusch
-    public GameObject mainCamera;
     public GameObject resetCam;
 
     public float speed = 150;
@@ -98,9 +94,11 @@ public class PlayerController : MonoBehaviour
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             Debug.Log("Leider verloren");
-            
-            //Pfusch
+            //ResetCam
             StartCoroutine(resetCam.GetComponent<ResetCameraController>().PlayResetCam());
+            
+            //Delete one Live
+            GameObject.Find("GameManager").GetComponent<GameManager>().RemoveLive();
         }
     }
     private void Finished()
@@ -109,16 +107,10 @@ public class PlayerController : MonoBehaviour
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         Debug.Log("Ziel erreicht");
+        //ResetCam
+        StartCoroutine(resetCam.GetComponent<ResetCameraController>().PlayResetCam());
         
-        //Pfusch
-        //StartCoroutine(PlayResetCam());
-    }
-    IEnumerator PlayResetCam()
-    {
-        resetCam.SetActive(true);
-        mainCamera.SetActive(false);
-        yield return new WaitForSeconds(2);
-        resetCam.SetActive(false);
-        mainCamera.SetActive(true);
+        //Finsih HUD
+        GameObject.Find("HudController").GetComponent<HudController>().FinishedHud();
     }
 }
