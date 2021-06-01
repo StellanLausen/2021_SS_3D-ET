@@ -10,38 +10,63 @@ public class GameManager : MonoBehaviour
     private HudController hudController;
     
     private int _lives = 3;
+    private float _dynTime = 0;
     private static float _time = 0;
+    private int _points = 0;
 
     private static float _recordOne = 9999;
-    private float _recordTwo;
-    private float _recordThree;
+    private static float _recordTwo = 9999;
+    private static float _recordThree = 9999;
     
     //Getter
     public int lives { get { return _lives; } } 
+    public float dynTime { get { return _dynTime; } }
     public float time { get { return _time; } }
     public float recordOne { get { return _recordOne; } }
+    public float recordTwo { get { return _recordTwo; } }
+    public float recordThree { get { return _recordThree; } }
+    public int points { get { return _points; } }
+    
     //Events
     public UnityEvent livesChanged = new UnityEvent();
     public UnityEvent timeChanged = new UnityEvent();
-
+    public UnityEvent pointsChanged = new UnityEvent();
+    
     private string sceneName;
     void Start()
     {
+        //SceneName
         Scene currentScene = SceneManager.GetActiveScene();
         sceneName = currentScene.name;
+        
         //EventListener
         if (GameObject.Find("HudController"))
         {
             hudController = GameObject.Find("HudController").GetComponent<HudController>(); 
-            hudController.recordChanged.AddListener(CheckRecord);   
+            hudController.win.AddListener(finishedLevel);   
         }
+        
+        //Timer
+        StartCoroutine(timeCall());
     }
 
+    public void finishedLevel()
+    {
+        _time = _dynTime;
+        CheckRecord();
+    }
+    
     private void CheckRecord()
     {
         if (_time < _recordOne)
         {
             _recordOne = _time;
+        }else if (_time < _recordTwo)
+        {
+            _recordTwo = _time;
+        }else if (_time < _recordThree)
+        {
+            _recordThree = _time;
         }
     }
 
@@ -52,12 +77,14 @@ public class GameManager : MonoBehaviour
         //Event
         livesChanged.Invoke();
     }
-    public void AddTime(float setTime)
+
+    public void AddPoint()
     {
-        _time = setTime;
-        timeChanged.Invoke();
+        _points++;
+        //Event
+        pointsChanged.Invoke();
     }
-    
+
     //LevelScene
     public void LoadLevelOne()
     {
@@ -89,15 +116,18 @@ public class GameManager : MonoBehaviour
     }
 
     
-    //Timer with Update
-    float timer = 0.0f;
-    void Update()
+    //Timer
+    IEnumerator timeCall()
     {
-        if (sceneName == "SampleScene")
+        while (true)
         {
-            timer += Time.deltaTime;
-            float seconds = timer % 60;
-            AddTime(seconds);   
+            timeCount();
+            yield return new WaitForSeconds(1);
         }
+    }
+    void timeCount()
+    {
+        _dynTime += 1;
+        timeChanged.Invoke();
     }
 }

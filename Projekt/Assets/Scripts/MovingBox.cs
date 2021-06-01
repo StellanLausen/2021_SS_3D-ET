@@ -12,7 +12,7 @@ public class MovingBox : MonoBehaviour
     private Boolean pos2Bool = true;
     void Update()
     {
-        if (pos1Bool == true)
+        if (pos1Bool)
         {
             transform.position = Vector3.MoveTowards(transform.position,pos2, 1f * Time.deltaTime);
             if (transform.position == pos2)
@@ -22,7 +22,7 @@ public class MovingBox : MonoBehaviour
             }
         }
 
-        if (pos2Bool == true)
+        if (pos2Bool)
         {
             transform.position = Vector3.MoveTowards(transform.position,pos1, 1f * Time.deltaTime);
             if (transform.position == pos1)

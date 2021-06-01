@@ -12,6 +12,6 @@ public class ResultFiedController : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         textCompTime = GetComponent<Text>();
-        textCompTime.text = gameManager.time.ToString();
+        textCompTime.text = gameManager.recordOne.ToString();
     }
 }

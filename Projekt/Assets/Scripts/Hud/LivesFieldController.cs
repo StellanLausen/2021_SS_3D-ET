@@ -19,7 +19,7 @@ public class LivesFieldController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void UpdateLives()
+    private void UpdateLives()
     {
         textCompLives.text = gameManager.lives.ToString();
     }

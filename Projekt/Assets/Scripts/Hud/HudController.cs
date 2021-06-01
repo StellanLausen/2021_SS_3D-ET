@@ -15,7 +15,7 @@ public class HudController : MonoBehaviour
     public GameObject ResultChar;
     private GameManager gameManager;
     
-    public UnityEvent recordChanged = new UnityEvent();
+    public UnityEvent win = new UnityEvent();
     void Start()
     {
         InGameMenu.SetActive(false);
@@ -37,7 +37,7 @@ public class HudController : MonoBehaviour
         {
             Time.timeScale = 0;
             isPaused = true;
-            textCompTime.text = gameManager.time.ToString();
+            textCompTime.text = gameManager.dynTime.ToString();
             InGameMenu.SetActive(true);
         }
     }
@@ -53,11 +53,10 @@ public class HudController : MonoBehaviour
         Time.timeScale = 1;
         SceneManager.LoadScene(2);
     }
-
     public void FinishedHud()
     {
         isPaused = false;
         PauseBtn();
-        recordChanged.Invoke();
+        win.Invoke();
     }
 }

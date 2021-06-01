@@ -7,6 +7,11 @@ TagManager:
   - Start
   - Ground
   - StairEnd
+  - Coin
+  - Slow
+  - Switch
+  - Trap
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -14,7 +19,7 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
+  - Player
   - 
   - 
   - 
