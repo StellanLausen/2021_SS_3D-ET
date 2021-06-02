@@ -92,9 +92,9 @@ public class GameManager : MonoBehaviour
     }
     public void LoadLevelTwo()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(4);
     }
-    
+
     //StartScene
     public void ExitApplication()
     {
