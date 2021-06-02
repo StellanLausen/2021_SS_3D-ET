@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -26,6 +27,7 @@ public class PlayerController : MonoBehaviour
     //Events
     public UnityEvent resetMap = new UnityEvent();
     public UnityEvent movingWallChanged = new UnityEvent();
+    public UnityEvent changeGravity = new UnityEvent();
     
     private void OnEnable()
     {
@@ -94,6 +96,18 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionEnter(Collision other)
     {
+        if (other.gameObject.CompareTag("leftGravity"))
+        {
+            Debug.Log("leftGravity active");
+            EventSystem.current.isgravtiyChanged(1);
+        }
+
+        if (other.gameObject.CompareTag("bottomGravity"))
+        {
+            Debug.Log("bottomGravity active");
+            EventSystem.current.isgravtiyChanged(2);
+        }
+        
         if (other.gameObject.CompareTag("Switch"))
         {
             movingWallChanged.Invoke();

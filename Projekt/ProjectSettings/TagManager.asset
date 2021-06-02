@@ -12,6 +12,8 @@ TagManager:
   - Switch
   - Trap
   - Enemy
+  - leftGravity
+  - bottomGravity
   layers:
   - Default
   - TransparentFX

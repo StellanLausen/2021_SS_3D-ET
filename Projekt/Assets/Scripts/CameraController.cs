@@ -32,7 +32,11 @@ public class CameraController : MonoBehaviour
     }
     void LateUpdate()
     {
-        transform.position = player.transform.position + offset - HandleZoom();
+        //normal
+        //transform.position = player.transform.position + offset - HandleZoom();
+        
+        //changeGravity
+        transform.position = player.transform.position + offset;
     }
     Vector3 HandleZoom()
     {
