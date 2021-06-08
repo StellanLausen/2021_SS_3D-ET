@@ -1,17 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.AI;
+using Vector3 = UnityEngine.Vector3;
+
 public class EnemyAi : MonoBehaviour
 {
     public NavMeshAgent agent;
     public GameObject PlayerController;
-    private Transform playerPos;
-    public LayerMask Ground, Player;
+    
+    private Transform playerTransform;
+    public LayerMask Player;
 
 
     private new Vector3 startPos;
+    
     //States
     public float sightRange;
     public bool playerInSightRange;
@@ -19,9 +24,16 @@ public class EnemyAi : MonoBehaviour
     void Awake()
     {
         PlayerController playerController = PlayerController.GetComponent<PlayerController>();
-        playerPos = PlayerController.transform;
+        playerTransform = PlayerController.transform;
+        
         playerController.resetMap.AddListener(reset);
+        playerController.LevelFinished.AddListener(reset);
+        
         agent = GetComponent<NavMeshAgent>();
+    }
+
+    void Start()
+    {
         startPos = transform.position;
     }
 
@@ -33,11 +45,11 @@ public class EnemyAi : MonoBehaviour
 
     private void Chase()
     {
-        agent.SetDestination(playerPos.position);
+        agent.SetDestination(playerTransform.position);
     }
 
     private void reset()
     {
-        //transform.position = startPos;
+        agent.Warp(startPos);
     }
 }

@@ -7,8 +7,8 @@ using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
-    private HudController hudController;
-    
+    private PlayerController playerController;
+
     private int _lives = 3;
     private float _dynTime = 0;
     private static float _time = 0;
@@ -38,24 +38,23 @@ public class GameManager : MonoBehaviour
         //SceneName
         Scene currentScene = SceneManager.GetActiveScene();
         sceneName = currentScene.name;
-        
-        //EventListener
-        if (GameObject.Find("HudController"))
+
+        //Player only exists in a Level so NullPointer if in Menu
+        if (GameObject.Find("Player"))
         {
-            hudController = GameObject.Find("HudController").GetComponent<HudController>(); 
-            hudController.win.AddListener(finishedLevel);   
+            playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+            playerController.LevelFinished.AddListener(FinishedLevel);
         }
-        
+
         //Timer
-        StartCoroutine(timeCall());
+        StartCoroutine(TimeCall());
     }
 
-    public void finishedLevel()
+    public void FinishedLevel()
     {
         _time = _dynTime;
         CheckRecord();
     }
-    
     private void CheckRecord()
     {
         if (_time < _recordOne)
@@ -69,7 +68,7 @@ public class GameManager : MonoBehaviour
             _recordThree = _time;
         }
     }
-
+    
     //Changed GameManagerVariables
     public void RemoveLive()
     {
@@ -77,15 +76,30 @@ public class GameManager : MonoBehaviour
         //Event
         livesChanged.Invoke();
     }
-
+    public void AddLive()
+    {
+        if (-lives < 3)
+        {
+            _lives++;
+        }
+        livesChanged.Invoke();
+    }
     public void AddPoint()
     {
         _points++;
         //Event
         pointsChanged.Invoke();
     }
-
-    //LevelScene
+    
+    //LoadScenes
+    public void LoadMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+    public void LoadLevelScene()
+    {
+        SceneManager.LoadScene(3);
+    }
     public void LoadLevelOne()
     {
         SceneManager.LoadScene(1);
@@ -94,38 +108,23 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(4);
     }
-
-    //StartScene
+    
+    //Game Functions
     public void ExitApplication()
     {
         Application.Quit();
     }
-    public void StartGame()
-    {
-        SceneManager.LoadScene(1);
-    }
-    
-    //Scenes
-    public void LoadLevelScene()
-    {
-        SceneManager.LoadScene(3);
-    }
-    public void LoadMenu()
-    {
-        SceneManager.LoadScene(0);
-    }
-
     
     //Timer
-    IEnumerator timeCall()
+    private IEnumerator TimeCall()
     {
         while (true)
         {
-            timeCount();
             yield return new WaitForSeconds(1);
+            TimeCount();
         }
     }
-    void timeCount()
+    private void TimeCount()
     {
         _dynTime += 1;
         timeChanged.Invoke();

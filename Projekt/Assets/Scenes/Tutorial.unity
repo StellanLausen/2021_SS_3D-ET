@@ -481,11 +481,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f712b0c73994f247beadffc799c0754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InGameMenu: {fileID: 0}
-  ResultChar: {fileID: 0}
-  win:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &272154208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -532,7 +527,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1359469335}
         m_TargetAssemblyTypeName: HudController, Assembly-CSharp
-        m_MethodName: PauseBtn
+        m_MethodName: InGameMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -598,6 +593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd315d17831783d4fb953ccb246417f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerController: {fileID: 0}
 --- !u!1 &373506059
 GameObject:
   m_ObjectHideFlags: 0
@@ -862,7 +858,7 @@ MonoBehaviour:
   movingWallChanged:
     m_PersistentCalls:
       m_Calls: []
-  changeGravity:
+  LevelFinished:
     m_PersistentCalls:
       m_Calls: []
 --- !u!54 &499566879
@@ -3120,49 +3116,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &2071391618
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2071391620}
-  - component: {fileID: 2071391619}
-  m_Layer: 0
-  m_Name: EventSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2071391619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2071391618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d26e751330557a41ae8a9e7e554a677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &2071391620
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2071391618}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.6242478, y: 0.44425252, z: 0.04951802}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 16
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2098057290
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3243,7 +3196,7 @@ PrefabInstance:
         type: 3}
       propertyPath: playerController
       value: 
-      objectReference: {fileID: 499566877}
+      objectReference: {fileID: 0}
     - target: {fileID: 3084362617371744131, guid: 9445649a3ab99734fa54a571dcca6309,
         type: 3}
       propertyPath: m_Name

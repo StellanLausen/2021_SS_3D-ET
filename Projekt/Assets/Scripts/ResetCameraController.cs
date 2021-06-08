@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class ResetCameraController : MonoBehaviour
 {
-    public GameObject mainCamera;
-
+    [SerializeField]
+    private GameObject mainCamera;
+    
+    
     public IEnumerator PlayResetCam()
     {
-        this.gameObject.SetActive(true);
+        gameObject.SetActive(true);
         mainCamera.SetActive(false);
+        
         yield return new WaitForSeconds(2);
-        this.gameObject.SetActive(false);
+        
+        gameObject.SetActive(false);
         mainCamera.SetActive(true);
     }
 }

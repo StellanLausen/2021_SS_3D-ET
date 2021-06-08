@@ -7,15 +7,18 @@ using Vector3 = UnityEngine.Vector3;
 
 public class CameraController : MonoBehaviour
 {
-    public GameObject player;
+    [SerializeField]
+    private GameObject player;
 
+    [SerializeField]
+    private InputAction zoom;
+    
     private float zoomAmount;
-    public float maxZoomIn = 2.5f;
-    public float maxZoomOut = -7f;
+    private float maxZoomIn = 2.5f;
+    private float maxZoomOut = -7f;
 
     private Vector3 offset;
     private Vector3 staticOffset = new Vector3(0f,10f,-10f);
-    public InputAction zoom;
 
     private void OnEnable()
     {
@@ -25,20 +28,20 @@ public class CameraController : MonoBehaviour
     {
         zoom.Disable();
     }
-    void Start()
+    private void Start()
     {
         staticOffset = player.transform.position + staticOffset;
         offset = staticOffset - player.transform.position;
     }
-    void LateUpdate()
+    private void LateUpdate()
     {
-        //normal
-        //transform.position = player.transform.position + offset - HandleZoom();
+        //reset angle
+        transform.eulerAngles = new Vector3(45f, 0, 0);
         
-        //changeGravity
-        transform.position = player.transform.position + offset;
+        //set camera pos
+        transform.position = player.transform.position + offset - HandleZoom();
     }
-    Vector3 HandleZoom()
+    private Vector3 HandleZoom()
     {
         float zoomInput = zoom.ReadValue<float>();
 

@@ -11,52 +11,81 @@ public class HudController : MonoBehaviour
     private Boolean isPaused = false;
     private Text textCompTime;
 
-    public GameObject InGameMenu;
-    public GameObject ResultChar;
     private GameManager gameManager;
+    private PlayerController playerController;
     
-    public UnityEvent win = new UnityEvent();
+    //private GameObject inGameMenu;
+    private GameObject resultChar;
+    private GameObject result;
+    private GameObject tryAgain;
+    private GameObject next;
+    private GameObject pauseBtn;
+
+    void Awake()
+    {
+        //inGameMenu = GameObject.Find("InGameMenu");
+        resultChar = GameObject.Find("ResultChar");
+
+        result = GameObject.Find("Result");
+        tryAgain = GameObject.Find("TryAgainBtn");
+        next = GameObject.Find("NextBtn");
+        pauseBtn = GameObject.Find("PauseBtn");
+        
+        gameManager  = GameObject.Find("GameManager").GetComponent<GameManager>();
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+    }
     void Start()
     {
-        InGameMenu.SetActive(false);
-        textCompTime = ResultChar.GetComponent<Text>();
-
-        //textCompTime = GameObject.Find("ResultChar").GetComponent<Text>();
-        gameManager  = GameObject.Find("GameManager").GetComponent<GameManager>();
+        //Debug.Log("Start " +inGameMenu);
+        //Debug.Log("Start " +gameManager);
+        
+        result.SetActive(false);
+        tryAgain.SetActive(false);
+        next.SetActive(false);
+        //inGameMenu.SetActive(false);
+        
+        textCompTime = resultChar.GetComponent<Text>();
+        playerController.LevelFinished.AddListener(Finished);
     }
-
-    public void PauseBtn()
+    public void OpenInGameMenu()
     {
         if (isPaused)
         {
             Time.timeScale = 1;
             isPaused = false;
-            InGameMenu.SetActive(false);
+            //inGameMenu.SetActive(false);
+            
+            result.SetActive(false);
+            tryAgain.SetActive(false);
+            next.SetActive(false);
         }
         else
         {
             Time.timeScale = 0;
             isPaused = true;
+            //Debug.Log(gameManager);
             textCompTime.text = gameManager.dynTime.ToString();
-            InGameMenu.SetActive(true);
+            //Debug.Log("OpenMenu2 " + inGameMenu);
+            //inGameMenu.SetActive(true);
+            
+            result.SetActive(true);
+            tryAgain.SetActive(true);
+            next.SetActive(true);
         }
     }
-    public void TryAgainBtn()
+    public void Finished()
     {
-        isPaused = false;
+        pauseBtn.SetActive(false);
+        OpenInGameMenu();
+    }
+    private void TryAgainBtn()
+    {
         Time.timeScale = 1;
         SceneManager.LoadScene(1);
     }
-    public void NextBtn()
+    private void NextBtn()
     {        
-        isPaused = false;
         Time.timeScale = 1;
         SceneManager.LoadScene(2);
-    }
-    public void FinishedHud()
-    {
-        isPaused = false;
-        PauseBtn();
-        win.Invoke();
     }
 }

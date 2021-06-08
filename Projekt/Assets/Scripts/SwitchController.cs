@@ -1,44 +1,47 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SwitchController : MonoBehaviour
 {
-    
-    public Material[] material;
-    public GameObject PlayerController;
-    Renderer rend;
+    [SerializeField]
+    private GameObject playerControllerObj;
+    [SerializeField]
+    private GameObject switchBtnPivot;
+    [SerializeField]
+    private int id;
+    private bool active = false;
 
-    private Boolean active = false;
-    
-    void Start()
+    private void Start()
     {
-        PlayerController playerController = PlayerController.GetComponent<PlayerController>();
-        playerController.movingWallChanged.AddListener(changeActive);
-        playerController.resetMap.AddListener(reset);
-        
-        rend = GetComponent<Renderer>();
-        rend.enabled = true;
-        rend.sharedMaterial = material[0];
+        PlayerController PlayerController = playerControllerObj.GetComponent<PlayerController>();
+        PlayerController.resetMap.AddListener(Reset);
     }
-    
-    private void changeActive()
+    private void OnCollisionEnter(Collision other)
     {
-        active = !active;
+        if (other.gameObject.CompareTag("Player"))
+        {
+            ChangeActive();
+            EventSystem.current.switchChange(id);
+        }
+    }
+    private void ChangeActive()
+    {
         if (active)
         {
-            rend.sharedMaterial = material[1];
+            switchBtnPivot.transform.Rotate(new Vector3(20f, 0f, 0f));
         }
         else
         {
-            rend.sharedMaterial = material[0];
+            switchBtnPivot.transform.Rotate(new Vector3(-20f, 0f, 0f));
         }
+        active = !active;
     }
-
-    private void reset()
+    private void Reset()
     {
         active = false;
-        rend.sharedMaterial = material[0];
     }
 }

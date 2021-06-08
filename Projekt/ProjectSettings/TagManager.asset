@@ -4,16 +4,15 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Start
   - Ground
   - StairEnd
   - Coin
   - Slow
-  - Switch
   - Trap
   - Enemy
   - leftGravity
   - bottomGravity
+  - Switch
   layers:
   - Default
   - TransparentFX

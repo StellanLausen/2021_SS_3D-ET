@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,26 +9,37 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public GameObject resetCam;
+    public class IntEvent : UnityEvent<int> {}
+    
+    [SerializeField] private GameObject resetCamObj;
+    private ResetCameraController resetCamContr;
+    [SerializeField] private Transform mainCamera;
+
+    //[SerializeField]
+    //private GameObject gameManagerObj;
+    private GameManager gameManager;
 
     //OnCollisionStay is another speed = 150
-    public float speed = 150;
-    public float jump = 300;
-    public float gameOverHeight = 0f;
+    [SerializeField] private float speed = 250;
+    [SerializeField] private float jump = 300;
+    [SerializeField] private float gameOverHeight = 0f;
 
-    private Boolean shouldJump;
-    private float collectedJumpTime;
-    private Boolean isGrounded;
+    //Jump
+    private bool shouldJump;
+    private float collectedJumpForce;
+    private float jumpForce = 0;
+    
     private Vector3 startPosVec;
-    private float jumpPressTime = 0;
     private Rigidbody rb;
+
+    private LayerMask groundLayerMask;
 
     public InputAction move;
     
     //Events
+    public UnityEvent LevelFinished = new UnityEvent();
     public UnityEvent resetMap = new UnityEvent();
-    public UnityEvent movingWallChanged = new UnityEvent();
-    public UnityEvent changeGravity = new UnityEvent();
+    public IntEvent gravityChange = new IntEvent();
     
     private void OnEnable()
     {
@@ -39,6 +51,11 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
+        groundLayerMask = LayerMask.GetMask("Ground");
+        resetCamContr = resetCamObj.GetComponent<ResetCameraController>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        
+        
         rb = GetComponent<Rigidbody>();
         startPosVec = new Vector3(0,0.5f,0);
     }
@@ -51,44 +68,65 @@ public class PlayerController : MonoBehaviour
 
         //jump
         Vector3 rayCastDirectrion = new Vector3(0,-1,0);
-        if (Physics.Raycast(transform.position, rayCastDirectrion, 1f, LayerMask.GetMask("Ground")))
+        if (Physics.Raycast(transform.position, rayCastDirectrion, 1f, groundLayerMask))
         {
             Jump();
         }
     }
     private void FixedUpdate()
     {
+        Vector3 camF = mainCamera.forward;
+        Vector3 camR = mainCamera.right;
+
+        camF.y = 0;
+        camR.y = 0;
+
+        camF = camF.normalized;
+        camR = camR.normalized;
+
         //control
         Vector2 movement = move.ReadValue<Vector2>();
-        rb.AddForce(speed * Time.deltaTime * movement.x, 0, speed * Time.deltaTime * movement.y);
+        Vector3 Vec = new Vector3(movement.x, 0, movement.y);
+
+        Vector3 x = camF * movement.y;
+        Vector3 y = camR * movement.x;
+
+        Vector3 dir = x + y;
+
+        rb.AddForce(speed * dir.x * Time.deltaTime, 0, speed * dir.z * Time.deltaTime);
+        //rb.AddForce(speed * Time.deltaTime * movement.x, 0, speed * Time.deltaTime * movement.y);
 
         //jump
         if (shouldJump)
         {
-            rb.AddForce(0, jump + collectedJumpTime, 0);
-            collectedJumpTime = 0;
+            rb.AddForce(0, jump + collectedJumpForce, 0);
+            collectedJumpForce = 0;
             shouldJump = false;
         }
     }
-    private void OnCollisionStay(Collision collision)
+    private void OnCollisionStay(Collision other)  
     {
-        if (collision.gameObject.CompareTag("Finish"))
+        GameObject collisionStay = other.gameObject;
+        
+        if (collisionStay.CompareTag("Finish"))
         {
             Finished();
         }
 
-        if (collision.gameObject.CompareTag("Slow"))
+        if (collisionStay.CompareTag("Slow"))
         {
-            speed = 75;
+            speed = 125;
         }
         else
         {
-            speed = 150;
+            speed = 250;
         }
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Coin"))
+        GameObject triggerEnter = other.gameObject;
+        
+        if (triggerEnter.CompareTag("Coin"))
         {
             other.gameObject.SetActive(false);
             AddPoint();
@@ -96,29 +134,24 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("leftGravity"))
-        {
-            Debug.Log("leftGravity active");
-            EventSystem.current.isgravtiyChanged(1);
-        }
-
-        if (other.gameObject.CompareTag("bottomGravity"))
-        {
-            Debug.Log("bottomGravity active");
-            EventSystem.current.isgravtiyChanged(2);
-        }
+        GameObject collisionEnter = other.gameObject;
         
-        if (other.gameObject.CompareTag("Switch"))
+        if (collisionEnter.CompareTag("leftGravity"))
         {
-            movingWallChanged.Invoke();
+            gravityChange.Invoke(1);
         }
 
-        if (other.gameObject.CompareTag("Trap"))
+        if (collisionEnter.CompareTag("bottomGravity"))
+        {
+            gravityChange.Invoke(2);
+        }
+
+        if (collisionEnter.CompareTag("Trap"))
         {
             GameOver();
         }
 
-        if (other.gameObject.CompareTag("Enemy"))
+        if (collisionEnter.CompareTag("Enemy"))
         {
             GameOver();
         }
@@ -127,54 +160,55 @@ public class PlayerController : MonoBehaviour
     {
         if (Keyboard.current.spaceKey.isPressed)
         {
-            jumpPressTime = jumpPressTime + 0.15f;
+            jumpForce = jumpForce + 0.15f;
         }
 
         if (Keyboard.current.spaceKey.wasReleasedThisFrame)
         {
             shouldJump = true;
-            if (jumpPressTime < 20)
+            if (jumpForce < 20)
             {
-                jumpPressTime = 0;
+                jumpForce = 0;
             }
-            else if (jumpPressTime > 50)
+            else if (jumpForce > 50)
             {
-                jumpPressTime = 50;
+                jumpForce = 50;
             }
-            collectedJumpTime = jumpPressTime;
-            jumpPressTime = 0;
+            collectedJumpForce = jumpForce;
+            jumpForce = 0;
         }
     }
     private void GameOver()
     {
-        transform.position = startPosVec;
+            transform.position = startPosVec;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+            
             Debug.Log("Leider verloren");
             //ResetMap
             resetMap.Invoke();
             //ResetCam
-            StartCoroutine(resetCam.GetComponent<ResetCameraController>().PlayResetCam());
+            StartCoroutine(resetCamContr.PlayResetCam());
             
             //Delete one Live
-            GameObject.Find("GameManager").GetComponent<GameManager>().RemoveLive();
+            gameManager.RemoveLive();
     }
     private void Finished()
     {
+        Debug.Log("Ziel erreicht");
+        
         transform.position = startPosVec;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        Debug.Log("Ziel erreicht");
-        //ResetMap
-        resetMap.Invoke();
+
         //ResetCam
-        StartCoroutine(resetCam.GetComponent<ResetCameraController>().PlayResetCam());
+        StartCoroutine(resetCamContr.GetComponent<ResetCameraController>().PlayResetCam());
         
-        //Finish HUD
-        GameObject.Find("HudController").GetComponent<HudController>().FinishedHud();
+        //Finish
+        LevelFinished.Invoke();
     }
     private void AddPoint()
     {
-        GameObject.Find("GameManager").GetComponent<GameManager>().AddPoint();
+        gameManager.AddPoint();
     }
 }

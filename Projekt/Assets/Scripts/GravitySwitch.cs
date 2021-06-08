@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class GravitySwitch : MonoBehaviour
 {
-    private int id;
+    public PlayerController playerController;
     
     void Start()
     {
-        EventSystem.current.gravityChanged += changeGravity;
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+        playerController.gravityChange.AddListener(changeGravity);
     }
 
     private void changeGravity(int id)
