@@ -7,26 +7,26 @@ using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
-    private HudController hudController;
-    
-    private int _lives = 3;
-    private float _dynTime = 0;
-    private static float _time = 0;
-    private int _points = 0;
+    private PlayerController playerController;
 
-    private static float _recordOne = 9999;
+    private int lives = 3;
+    private int points = 0;
+    private float dynTime = 0;
+    private static float _time = 0;
+
+    private static float _recordOne;
     private static float _recordTwo = 9999;
     private static float _recordThree = 9999;
     
     //Getter
-    public int lives { get { return _lives; } } 
-    public float dynTime { get { return _dynTime; } }
-    public float time { get { return _time; } }
-    public float recordOne { get { return _recordOne; } }
-    public float recordTwo { get { return _recordTwo; } }
-    public float recordThree { get { return _recordThree; } }
-    public int points { get { return _points; } }
-    
+    public int Lives => lives;
+    public int Points => points;
+    public float DynTime => dynTime;
+    public float Time => _time;
+    public static float RecordOne => _recordOne;
+    public float recordTwo => _recordTwo;
+    public float recordThree => _recordThree;
+
     //Events
     public UnityEvent livesChanged = new UnityEvent();
     public UnityEvent timeChanged = new UnityEvent();
@@ -36,27 +36,24 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //SceneName
-        Scene currentScene = SceneManager.GetActiveScene();
-        sceneName = currentScene.name;
-        
-        //EventListener
-        if (GameObject.Find("HudController"))
-        {
-            hudController = GameObject.Find("HudController").GetComponent<HudController>(); 
-            hudController.win.AddListener(finishedLevel);   
-        }
-        
-        //Timer
-        StartCoroutine(timeCall());
-    }
+        sceneName = SceneManager.GetActiveScene().name;
 
-    public void finishedLevel()
+        //Player only exists in a Level so NullPointer if in Menu
+        if (GameObject.Find("Player"))
+        {
+            playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+            playerController.levelFinished.AddListener(FinishedLevel);
+        }
+
+        //Timer
+        StartCoroutine(TimeCall());
+    }
+    private void FinishedLevel()
     {
-        _time = _dynTime;
+        _time = dynTime;
         CheckRecord();
     }
-    
-    private void CheckRecord()
+    private static void CheckRecord()
     {
         if (_time < _recordOne)
         {
@@ -69,65 +66,69 @@ public class GameManager : MonoBehaviour
             _recordThree = _time;
         }
     }
-
-    //Changed GameManagerVariables
+    
+    //Changed GameManagerVariables UnityEvents
     public void RemoveLive()
     {
-        _lives--;
+        lives--;
         //Event
         livesChanged.Invoke();
     }
-
+    public void AddLive()
+    {
+        if (-Lives < 3)
+        {
+            lives++;
+        }
+        livesChanged.Invoke();
+    }
     public void AddPoint()
     {
-        _points++;
+        points++;
         //Event
         pointsChanged.Invoke();
     }
-
-    //LevelScene
-    public void LoadLevelOne()
-    {
-        SceneManager.LoadScene(1);
-    }
-    public void LoadLevelTwo()
-    {
-        SceneManager.LoadScene(1);
-    }
     
-    //StartScene
-    public void ExitApplication()
-    {
-        Application.Quit();
-    }
-    public void StartGame()
-    {
-        SceneManager.LoadScene(1);
-    }
-    
-    //Scenes
-    public void LoadLevelScene()
-    {
-        SceneManager.LoadScene(3);
-    }
+    //LoadScenes
     public void LoadMenu()
     {
         SceneManager.LoadScene(0);
     }
-
+    public void LoadLevelScene()
+    {
+        SceneManager.LoadScene(1);
+    }
+    public void LoadLevelOne()
+    {
+        SceneManager.LoadScene(3);
+    }
+    public void LoadLevelTwo()
+    {
+        SceneManager.LoadScene(4);
+    }
+    public void LoadLevelThree()
+    {
+        SceneManager.LoadScene(5);
+    }
+    
+    //Game Functions
+    public void ExitApplication()
+    {
+        Application.Quit();
+    }
     
     //Timer
-    IEnumerator timeCall()
+    private IEnumerator TimeCall()
     {
         while (true)
         {
-            timeCount();
             yield return new WaitForSeconds(1);
+            TimeCount();
         }
     }
-    void timeCount()
+    private void TimeCount()
     {
-        _dynTime += 1;
+        dynTime += 1;
         timeChanged.Invoke();
     }
 }

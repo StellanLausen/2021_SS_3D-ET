@@ -13,6 +13,6 @@ public class RecordFielController : MonoBehaviour
         
         textCompLives = GetComponent<Text>();
         
-        textCompLives.text = gameManager.time.ToString();
+        textCompLives.text = gameManager.Time.ToString();
     }
 }

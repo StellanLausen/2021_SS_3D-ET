@@ -5,21 +5,23 @@ using UnityEngine.UI;
 
 public class TimeFieldComtroller : MonoBehaviour
 {
-    private Text textCompTime;
+    [SerializeField]
+    private GameObject gameManagerObj;
     private GameManager gameManager;
-    void Start()
+
+    private Text textCompTime;
+    private void Start()
     {
-        gameManager  = GameObject.Find("GameManager").GetComponent<GameManager>();
-        
-        textCompTime = GetComponent<Text>();
+        gameManager  = gameManagerObj.GetComponent<GameManager>();
+        textCompTime = gameObject.GetComponent<Text>();
         
         gameManager.timeChanged.AddListener(UpdateTime);
-        textCompTime.text = gameManager.time.ToString();
     }
-
-    // Update is called once per frame
-    void UpdateTime()
+    private void UpdateTime()
     {
-        textCompTime.text = gameManager.time.ToString();
+        var time = gameManager.DynTime;
+        var fancyTime = Mathf.Floor(time / 60 ).ToString("00")  + " : " + 
+                          Mathf.FloorToInt(time % 60).ToString("00");
+        textCompTime.text = fancyTime;
     }
 }

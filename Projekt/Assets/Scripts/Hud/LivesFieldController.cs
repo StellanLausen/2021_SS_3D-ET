@@ -8,19 +8,37 @@ public class LivesFieldController : MonoBehaviour
 {
     private Text textCompLives;
     private GameManager gameManager;
-    void Start()
+
+    private GameObject lifeBarOne;
+    private GameObject lifeBarTwo;
+    private GameObject lifeBarThree;
+
+    void Awake()
     {
         gameManager  = GameObject.Find("GameManager").GetComponent<GameManager>();
-        
-        textCompLives = GetComponent<Text>();
-        
+        lifeBarOne = GameObject.Find("LifeBarOne");
+        lifeBarTwo = GameObject.Find("LifeBarTwo");
+        lifeBarThree = GameObject.Find("LifeBarThree");
+    }
+    void Start()
+    {
         gameManager.livesChanged.AddListener(UpdateLives);
-        textCompLives.text = gameManager.lives.ToString();
     }
 
-    // Update is called once per frame
     private void UpdateLives()
     {
-        textCompLives.text = gameManager.lives.ToString();
+        switch (gameManager.Lives)
+        {
+            case 2 :
+                lifeBarThree.SetActive(false);
+                break;
+            case 1 :
+                lifeBarTwo.SetActive(false);
+                break;
+            case 0 :
+                lifeBarOne.SetActive(false);
+                break;
+        }
+        
     }
 }
