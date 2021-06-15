@@ -27,7 +27,7 @@ public class LivesFieldController : MonoBehaviour
 
     private void UpdateLives()
     {
-        switch (gameManager.lives)
+        switch (gameManager.Lives)
         {
             case 2 :
                 lifeBarThree.SetActive(false);

@@ -28,7 +28,7 @@ public class ActiveCameraController : MonoBehaviour
         zoom.Enable();
     }
     
-    private float zoomAmount = -10;
+    public static float zoomAmount = -10;
     private float maxZoomIn = -5f;
     private float maxZoomOut = -15f;
 
@@ -68,8 +68,6 @@ public class ActiveCameraController : MonoBehaviour
         {
             zoomAmount = zoomAmount + zoomInput * Time.deltaTime;
         }
-        
-        Debug.Log(zoomAmount);
         return zoomAmount;
     }
 }

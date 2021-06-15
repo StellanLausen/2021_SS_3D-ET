@@ -358,7 +358,7 @@ GameObject:
   - component: {fileID: 5198150403330562130}
   - component: {fileID: 5198150403330562131}
   - component: {fileID: 5198150403330562132}
-  - component: {fileID: 5198150403330562133}
+  - component: {fileID: 7254586852326435632}
   m_Layer: 0
   m_Name: SwitchBtn
   m_TagString: Untagged
@@ -1201,7 +1201,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!114 &5198150403330562133
+--- !u!114 &7254586852326435632
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1213,6 +1213,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdea8dcbee3b09b49a4debec2265f9b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerController: {fileID: 0}
   switchBtnPivot: {fileID: 5198150402868663778}
-  id: 2
-  material: []
+  id: 0

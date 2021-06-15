@@ -4,15 +4,13 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Ground
-  - StairEnd
   - Coin
   - Slow
   - Trap
   - Enemy
-  - leftGravity
-  - bottomGravity
   - Switch
+  - GroupTP
+  - TrampolineTrigger
   layers:
   - Default
   - TransparentFX

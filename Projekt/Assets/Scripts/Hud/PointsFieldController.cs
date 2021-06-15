@@ -15,11 +15,11 @@ public class PointsFieldController : MonoBehaviour
         textCompPoints = GetComponent<Text>();
         
         gameManager.pointsChanged.AddListener(UpdatePoints);
-        textCompPoints.text = gameManager.points.ToString();
+        textCompPoints.text = gameManager.Points.ToString();
     }
 
     private void UpdatePoints()
     {
-        textCompPoints.text = gameManager.points.ToString();
+        textCompPoints.text = gameManager.Points.ToString();
     }
 }

@@ -5,19 +5,26 @@ using UnityEngine;
 
 public class EventSystem : MonoBehaviour
 {
-    public static EventSystem current;
-    private int id;
+    public static EventSystem Current;
     private void Awake()
     {
-        current = this;
+        Current = this;
     }
     
-    public event Action<int> onSwitchChange;
-    public void switchChange(int id)
+    public event Action<int> ONSwitchChange;
+    public void SwitchChange(int id)
     {
-        if(onSwitchChange != null)
+        if(ONSwitchChange != null)
         {
-            onSwitchChange(id);
+            ONSwitchChange(id);
+        }
+    }
+    public event Action<int> ONCheckpointEnter; 
+    public void CheckpointEnter(int id)
+    {
+        if (ONCheckpointEnter != null)
+        {
+            ONCheckpointEnter(id);
         }
     }
 }

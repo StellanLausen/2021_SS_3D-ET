@@ -9,24 +9,24 @@ public class GameManager : MonoBehaviour
 {
     private PlayerController playerController;
 
-    private int _lives = 3;
-    private float _dynTime = 0;
+    private int lives = 3;
+    private int points = 0;
+    private float dynTime = 0;
     private static float _time = 0;
-    private int _points = 0;
 
-    private static float _recordOne = 9999;
+    private static float _recordOne;
     private static float _recordTwo = 9999;
     private static float _recordThree = 9999;
     
     //Getter
-    public int lives { get { return _lives; } } 
-    public float dynTime { get { return _dynTime; } }
-    public float time { get { return _time; } }
-    public float recordOne { get { return _recordOne; } }
-    public float recordTwo { get { return _recordTwo; } }
-    public float recordThree { get { return _recordThree; } }
-    public int points { get { return _points; } }
-    
+    public int Lives => lives;
+    public int Points => points;
+    public float DynTime => dynTime;
+    public float Time => _time;
+    public static float RecordOne => _recordOne;
+    public float recordTwo => _recordTwo;
+    public float recordThree => _recordThree;
+
     //Events
     public UnityEvent livesChanged = new UnityEvent();
     public UnityEvent timeChanged = new UnityEvent();
@@ -36,26 +36,24 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //SceneName
-        Scene currentScene = SceneManager.GetActiveScene();
-        sceneName = currentScene.name;
+        sceneName = SceneManager.GetActiveScene().name;
 
         //Player only exists in a Level so NullPointer if in Menu
         if (GameObject.Find("Player"))
         {
             playerController = GameObject.Find("Player").GetComponent<PlayerController>();
-            playerController.LevelFinished.AddListener(FinishedLevel);
+            playerController.levelFinished.AddListener(FinishedLevel);
         }
 
         //Timer
         StartCoroutine(TimeCall());
     }
-
-    public void FinishedLevel()
+    private void FinishedLevel()
     {
-        _time = _dynTime;
+        _time = dynTime;
         CheckRecord();
     }
-    private void CheckRecord()
+    private static void CheckRecord()
     {
         if (_time < _recordOne)
         {
@@ -69,24 +67,24 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    //Changed GameManagerVariables
+    //Changed GameManagerVariables UnityEvents
     public void RemoveLive()
     {
-        _lives--;
+        lives--;
         //Event
         livesChanged.Invoke();
     }
     public void AddLive()
     {
-        if (-lives < 3)
+        if (-Lives < 3)
         {
-            _lives++;
+            lives++;
         }
         livesChanged.Invoke();
     }
     public void AddPoint()
     {
-        _points++;
+        points++;
         //Event
         pointsChanged.Invoke();
     }
@@ -98,15 +96,19 @@ public class GameManager : MonoBehaviour
     }
     public void LoadLevelScene()
     {
-        SceneManager.LoadScene(3);
+        SceneManager.LoadScene(1);
     }
     public void LoadLevelOne()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(3);
     }
     public void LoadLevelTwo()
     {
         SceneManager.LoadScene(4);
+    }
+    public void LoadLevelThree()
+    {
+        SceneManager.LoadScene(5);
     }
     
     //Game Functions
@@ -126,7 +128,7 @@ public class GameManager : MonoBehaviour
     }
     private void TimeCount()
     {
-        _dynTime += 1;
+        dynTime += 1;
         timeChanged.Invoke();
     }
 }

@@ -1,8 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -31,13 +27,12 @@ public class PlayerController : MonoBehaviour
     
     private Vector3 startPosVec;
     private Rigidbody rb;
-
     private LayerMask groundLayerMask;
 
     public InputAction move;
     
     //Events
-    public UnityEvent LevelFinished = new UnityEvent();
+    public UnityEvent levelFinished = new UnityEvent();
     public UnityEvent resetMap = new UnityEvent();
     public IntEvent gravityChange = new IntEvent();
     
@@ -49,17 +44,16 @@ public class PlayerController : MonoBehaviour
     {
         move.Disable();
     }
-    void Start()
+    private void Start()
     {
         groundLayerMask = LayerMask.GetMask("Ground");
         resetCamContr = resetCamObj.GetComponent<ResetCameraController>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         
-        
         rb = GetComponent<Rigidbody>();
-        startPosVec = new Vector3(0,0.5f,0);
+        startPosVec = transform.position;
     }
-    void Update()
+    private void Update()
     {
         if (rb.transform.position.y <= gameOverHeight)
         {
@@ -67,7 +61,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //jump
-        Vector3 rayCastDirectrion = new Vector3(0,-1,0);
+        var rayCastDirectrion = new Vector3(0,-1,0);
         if (Physics.Raycast(transform.position, rayCastDirectrion, 1f, groundLayerMask))
         {
             Jump();
@@ -75,26 +69,34 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        Vector3 camF = mainCamera.forward;
-        Vector3 camR = mainCamera.right;
+        Vector3 camY = mainCamera.forward;
+        Vector3 camX = mainCamera.right;
+        
+        camY.y = 0;
+        camX.y = 0;
+        
+        //Vector shows only direction without y value:
+        camY = camY.normalized;
+        camX = camX.normalized;
 
-        camF.y = 0;
-        camR.y = 0;
-
-        camF = camF.normalized;
-        camR = camR.normalized;
-
-        //control
+        //Read wasd into movement
         Vector2 movement = move.ReadValue<Vector2>();
-        Vector3 Vec = new Vector3(movement.x, 0, movement.y);
 
-        Vector3 x = camF * movement.y;
-        Vector3 y = camR * movement.x;
+        //if movement multiply it with direction for x and y
+        Vector3 y = camY * movement.y;
+        Vector3 x = camX * movement.x;
 
-        Vector3 dir = x + y;
+        /*
+        if "w" and "d" pressed:
+        
+        camForward =    0.7,0,0.7
+        camRight =      0.7,0,-0.7 
+        
+        moveDir =       1,0,0
+        */
 
-        rb.AddForce(speed * dir.x * Time.deltaTime, 0, speed * dir.z * Time.deltaTime);
-        //rb.AddForce(speed * Time.deltaTime * movement.x, 0, speed * Time.deltaTime * movement.y);
+        Vector3 moveDir = x + y;
+        rb.AddForce(speed * moveDir.x * Time.deltaTime, 0, speed * moveDir.z * Time.deltaTime);
 
         //jump
         if (shouldJump)
@@ -104,47 +106,23 @@ public class PlayerController : MonoBehaviour
             shouldJump = false;
         }
     }
-    private void OnCollisionStay(Collision other)  
-    {
-        GameObject collisionStay = other.gameObject;
-        
-        if (collisionStay.CompareTag("Finish"))
-        {
-            Finished();
-        }
-
-        if (collisionStay.CompareTag("Slow"))
-        {
-            speed = 125;
-        }
-        else
-        {
-            speed = 250;
-        }
-    }
     private void OnTriggerEnter(Collider other)
     {
-        GameObject triggerEnter = other.gameObject;
         
-        if (triggerEnter.CompareTag("Coin"))
+        if (other.CompareTag("Coin"))
         {
             other.gameObject.SetActive(false);
             AddPoint();
+        }
+
+        if (other.CompareTag("Finish"))
+        {
+            Finished();
         }
     }
     private void OnCollisionEnter(Collision other)
     {
         GameObject collisionEnter = other.gameObject;
-        
-        if (collisionEnter.CompareTag("leftGravity"))
-        {
-            gravityChange.Invoke(1);
-        }
-
-        if (collisionEnter.CompareTag("bottomGravity"))
-        {
-            gravityChange.Invoke(2);
-        }
 
         if (collisionEnter.CompareTag("Trap"))
         {
@@ -154,6 +132,15 @@ public class PlayerController : MonoBehaviour
         if (collisionEnter.CompareTag("Enemy"))
         {
             GameOver();
+        }
+    }
+    private void OnCollisionStay(Collision other)  
+    {
+        GameObject collisionStay = other.gameObject;
+
+        while (collisionStay.CompareTag("Slow"))
+        {
+            speed = 125;
         }
     }
     private void Jump()
@@ -205,7 +192,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(resetCamContr.GetComponent<ResetCameraController>().PlayResetCam());
         
         //Finish
-        LevelFinished.Invoke();
+        levelFinished.Invoke();
     }
     private void AddPoint()
     {

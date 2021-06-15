@@ -19,7 +19,7 @@ public class TimeFieldComtroller : MonoBehaviour
     }
     private void UpdateTime()
     {
-        var time = gameManager.dynTime;
+        var time = gameManager.DynTime;
         var fancyTime = Mathf.Floor(time / 60 ).ToString("00")  + " : " + 
                           Mathf.FloorToInt(time % 60).ToString("00");
         textCompTime.text = fancyTime;

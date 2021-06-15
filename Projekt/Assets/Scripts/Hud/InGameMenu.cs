@@ -1,64 +1,55 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class InGameMenu : MonoBehaviour
+namespace Hud
 {
-    [SerializeField]
-    private GameObject resultChar;
-    private Text textCompResult;
-
-    [SerializeField] 
-    private GameObject player;
-    private PlayerController playerController;
-
-    [SerializeField] 
-    private GameObject gameManagerObj;
-    private GameManager gameManager;
-    
-    private bool isPaused = false;
-    void Start()
+    public class InGameMenu : MonoBehaviour
     {
-        textCompResult = resultChar.GetComponent<Text>();
-        gameManager = gameManagerObj.GetComponent<GameManager>();
-        playerController = player.GetComponent<PlayerController>();
+        [SerializeField] private Text textCompResult;
+        [SerializeField] private PlayerController playerController;
+        
+        private bool isPaused = false;
+        private int sceneIndex;
+        private void Start()
+        {
+            playerController.levelFinished.AddListener(Finished);
+            gameObject.SetActive(false);
+            
+            sceneIndex = SceneManager.GetActiveScene().buildIndex;
+        }
+        private void Finished()
+        {
+            OpenInGameMenu();
+        }
+        public void OpenInGameMenu()
+        {
+            if (isPaused)
+            {
+                Time.timeScale = 1;
+                gameObject.SetActive(false);
 
-        playerController.LevelFinished.AddListener(Finished);
-        gameObject.SetActive(false);
-    }
-    private void Finished()
-    {
-        OpenInGameMenu();
-    }
-    public void OpenInGameMenu()
-    {
-        if (isPaused)
+                isPaused = false;
+            }
+            else
+            {
+                Time.timeScale = 0;
+                gameObject.SetActive(true);
+                textCompResult.text =
+                    GameObject.Find("FancyFunctionDELETE!!!LATER!!!").GetComponent<fancyTime>().FancyTime();
+
+                isPaused = true;
+            }  
+        }
+        public void TryAgainBtn()
         {
             Time.timeScale = 1;
-            gameObject.SetActive(false);
-
-            isPaused = false;
+            SceneManager.LoadScene(sceneIndex);
         }
-        else
-        {
-            Time.timeScale = 0;
-            gameObject.SetActive(true);
-            textCompResult.text =
-                GameObject.Find("FancyFunctionDELETE!!!LATER!!!").GetComponent<fancyTime>().FancyTime();
-
-            isPaused = true;
-        }  
-    }
-    public void TryAgainBtn()
-    {
-        Time.timeScale = 1;
-        SceneManager.LoadScene(1);
-    }
-    public void NextBtn()
-    {        
-        Time.timeScale = 1;
-        SceneManager.LoadScene(2);
+        public void NextBtn()
+        {        
+            Time.timeScale = 1;
+            SceneManager.LoadScene(2);
+        }
     }
 }
