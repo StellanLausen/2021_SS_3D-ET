@@ -1,7 +1,14 @@
-using System;
 using UnityEngine;
 using UnityEngine.AI;
 
+/*
+Enemys:			Änderungen vorbehalten. Siehe in "Projekt Datei" für genaue Zeilenangaben.
+Name Arbeit:	youtube Video Titel: 	FULL 3D ENEMY AI in 6 MINUTES! || Unity Tutorial
+Name Autor:		youtube Channel name: 	Dave / GameDevelopment	
+URL:			https://www.youtube.com/watch?v=UjkSFoLxesw&t=267s	
+Abrufdatum:		01.06.2021
+Lizenzmodel:	-
+ */
 namespace Enemy
 {
     public class CollidingEnemyAi : MonoBehaviour
@@ -36,10 +43,10 @@ namespace Enemy
             playerInSightRange = Physics.CheckSphere(transform.position, sightRange, isPlayer);
             if (playerInSightRange)
             {
-                Chase();
+                Follow();
             }
         }
-        private void Chase()
+        private void Follow()
         {
             agent.SetDestination(playerTransform.position);
         }

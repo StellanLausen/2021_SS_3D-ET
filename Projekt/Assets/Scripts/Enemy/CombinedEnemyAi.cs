@@ -8,12 +8,13 @@ namespace Enemy
 {
     public class CombinedEnemyAi : MonoBehaviour
     {
+        //source Enemy start -source code changed
         //Reference
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private PlayerController playerController;
         [SerializeField] private Transform playerTransform;
         [SerializeField] public LayerMask isPlayer;
-        [SerializeField] private GameObject bullet;
+        [SerializeField] private GameObject hittingBullet;
     
         //Reset
         private Vector3 startPos;
@@ -21,7 +22,7 @@ namespace Enemy
         //States
         [SerializeField] private float sightRange, enemySpeed, secondsTillNextShoot, shootForce, destroyTime;
         private bool playerInSightRange, prevPlayerInSightRange;
-
+        //source Enemy end
         private void Awake()
         {
             playerController.resetMap.AddListener(Reset);
@@ -35,10 +36,14 @@ namespace Enemy
         }
         private void FixedUpdate()
         {
+            //source Enemy start -source code changed
             playerInSightRange = Physics.CheckSphere(transform.position, sightRange, isPlayer);
             if (playerInSightRange)
             {
-                Chase();
+                //Chase the Player
+                Follow();
+                //look in Player Direction
+                transform.LookAt(playerTransform.position, Vector3.up);
 
                 if (!prevPlayerInSightRange)
                 {
@@ -51,7 +56,7 @@ namespace Enemy
                 prevPlayerInSightRange = false;
             }
         }
-        private void Chase()
+        private void Follow()
         {
             agent.SetDestination(playerTransform.position);
         }
@@ -65,23 +70,27 @@ namespace Enemy
         }
         private void Shoot()
         {
+            //source Enemy end
             var enemyPos = transform.position;
         
             //ShootDirection
             var shootDir = playerTransform.position - enemyPos;
-
+            var shootDirNormalized = shootDir.normalized;
+            
             //Spawn Bullet 0.5f in front of Enemy
-            var bulletSpawnPoint = enemyPos + (shootDir.normalized * 0.5f);
+            var bulletSpawnPoint = enemyPos + (shootDirNormalized * 0.5f);
 
             //Instantiate Bullet
-            GameObject bulletInstance = Instantiate(bullet, bulletSpawnPoint, Quaternion.identity);
-            Rigidbody rb = bulletInstance.GetComponent<Rigidbody>();
-        
+            //source Enemy start -source code changed
+            var bulletInstance = Instantiate(hittingBullet, bulletSpawnPoint, Quaternion.identity);
+            var rb = bulletInstance.GetComponent<Rigidbody>();
+            //source Enemy end
+            
             //Destroy Bullet
             Destroy(bulletInstance, destroyTime);
 
             //Shoot Bullet
-            rb.AddForce(shootDir * shootForce, ForceMode.Impulse);
+            rb.AddForce(shootDirNormalized * shootForce, ForceMode.Impulse);
         }
         private void Reset()
         {

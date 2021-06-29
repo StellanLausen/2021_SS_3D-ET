@@ -4,7 +4,7 @@ namespace MapObjects
 {
     public class TrampolineController : MonoBehaviour
     {
-        [SerializeField] private Rigidbody rbPlayerController;
+        [SerializeField] private Rigidbody rbPlayer;
         [SerializeField] private float jumpForce = 700;
         private bool shouldJump;
         private void Start()
@@ -16,13 +16,13 @@ namespace MapObjects
         {
             if (shouldJump)
             {
-                rbPlayerController.AddForce(0,jumpForce,0);
+                rbPlayer.AddForce(0,jumpForce,0);
                 shouldJump = false;
             }
         }
-        private void OnTriggerEnter(Collider other)
+        private void OnCollisionEnter(Collision other)
         {
-            if (other.CompareTag("Player")) shouldJump = true;
+            if (other.gameObject.CompareTag("Player")) shouldJump = true;
         }
     }
 }

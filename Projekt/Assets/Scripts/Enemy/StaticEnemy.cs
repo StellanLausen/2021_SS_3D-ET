@@ -1,20 +1,15 @@
-using System.Data.Common;
-using Cinemachine.Utility;
-using UnityEditor;
 using UnityEngine;
 
 namespace Enemy
 {
     public class StaticEnemy : MonoBehaviour
     {
-        private Vector3 startPos;
-        private Vector3 finishPos;
+        [SerializeField] private float moveToX, moveToY, moveToZ;
 
+        private Vector3 startPos, finishPos;
         private bool active = false;
         private float speed;
 
-        [SerializeField] private float moveToX, moveToY, moveToZ;
-    
         private void Start()
         {
             startPos = transform.position;
@@ -24,15 +19,12 @@ namespace Enemy
 
         private void Update()
         {
-            switch (active)
+            var transformPos = transform.position;
+            transform.position = active switch
             {
-                case false :
-                    transform.position = Vector3.MoveTowards(transform.position, startPos, speed * Time.deltaTime);
-                    break;
-                case true :
-                    transform.position= Vector3.MoveTowards(transform.position, finishPos,speed * Time.deltaTime);
-                    break;
-            }
+                false => Vector3.MoveTowards(transformPos, startPos, speed * Time.deltaTime),
+                true => Vector3.MoveTowards(transformPos, finishPos, speed * Time.deltaTime)
+            };
 
             if (transform.position == startPos)
             {
