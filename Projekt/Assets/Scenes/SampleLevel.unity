@@ -9322,13 +9322,16 @@ MonoBehaviour:
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 0
-  rigidbody: {fileID: 0}
+  rb: {fileID: 0}
   speed: 50
   jumpForceDefault: 300
   levelFinished:
     m_PersistentCalls:
       m_Calls: []
   resetMap:
+    m_PersistentCalls:
+      m_Calls: []
+  resetCamToStaticCam:
     m_PersistentCalls:
       m_Calls: []
 --- !u!54 &1885229153
