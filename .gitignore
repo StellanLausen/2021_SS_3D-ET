@@ -70,9 +70,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-README.txt
-VIDEO.txt
-Dokumente/
+.README.txt
+.VIDEO.txt
+.Dokumente/
 .idea
 
 # End of https://www.gitignore.io/api/osx,linux,windows
